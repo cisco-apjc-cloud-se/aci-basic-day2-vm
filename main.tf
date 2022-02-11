@@ -25,7 +25,7 @@ provider "vsphere" {
 }
 
 ### Remote Shared State ###
-data "terraform_remote_state" "dpgs" {
+data "terraform_remote_state" "day2" {
   backend = "remote"
   config = {
     organization = "mel-ciscolabs-com"
@@ -46,7 +46,7 @@ data "vsphere_compute_cluster" "cluster" {
 }
 
 data "vsphere_network" "dpgs" {
-  for_each = data.terraform_remote_state.outputs.dpgs
+  for_each = data.terraform_remote_state.day2.outputs.dpg
 
   name          = each.key ## Output configured to use VMware format for the key
   datacenter_id = data.vsphere_datacenter.datacenter.id
