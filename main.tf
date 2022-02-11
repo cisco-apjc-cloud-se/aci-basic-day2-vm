@@ -46,7 +46,7 @@ data "vsphere_compute_cluster" "cluster" {
 }
 
 data "vsphere_network" "dpgs" {
-  for_each = data.terraform_remote_state.day2.outputs.dpg
+  for_each = data.terraform_remote_state.day2.outputs.dpgs
 
   name          = each.key ## Output configured to use VMware format for the key
   datacenter_id = data.vsphere_datacenter.datacenter.id
