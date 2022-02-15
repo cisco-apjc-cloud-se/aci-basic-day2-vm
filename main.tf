@@ -52,6 +52,11 @@ data "vsphere_network" "dpgs" {
   datacenter_id = data.vsphere_datacenter.datacenter.id
 }
 
+data "vsphere_network" "quarantine" {
+  name          = "quarantine"
+  datacenter_id = data.vsphere_datacenter.datacenter.id
+}
+
 data "vsphere_datastore" "datastore" {
   name          = var.datastore
   datacenter_id = data.vsphere_datacenter.datacenter.id
@@ -76,7 +81,7 @@ resource "vsphere_virtual_machine" "vms" {
   scsi_type        = data.vsphere_virtual_machine.template.scsi_type
 
   network_interface {
-    network_id     = data.vsphere_network.dpgs[each.value.dpg_name].id
+    network_id     = try(data.vsphere_network.dpgs[each.value.dpg_name].id, data.vsphere_network.quarantine.id)
     adapter_type   = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
 
