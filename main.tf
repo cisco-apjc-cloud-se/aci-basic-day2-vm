@@ -35,6 +35,24 @@ data "terraform_remote_state" "day2" {
   }
 }
 
+### Locals ###
+locals {
+  ap_epg_map = data.terraform_remote_state.day2.outputs.epg_map["demo-basic-1"]
+  dpg_list = flatten([
+    for ap_key, ap in ap_epg_map : [
+      for e_key, epg in ap.epg_map : [
+        for d_key, domain in epg.dpg_map : [
+          domain.dpg_name
+        ]
+      ]
+    ]
+  ])
+}
+
+output "dpg_list" {
+  value = local.dpg_list
+}
+
 ### Existing Data Sources
 data "vsphere_datacenter" "datacenter" {
   name = var.dc
@@ -46,7 +64,7 @@ data "vsphere_compute_cluster" "cluster" {
 }
 
 data "vsphere_network" "dpgs" {
-  for_each = data.terraform_remote_state.day2.outputs.dpgs
+  for_each = toset(local.dpg_list) # data.terraform_remote_state.day2.outputs.dpgs
 
   name          = each.key ## Output configured to use VMware format for the key
   datacenter_id = data.vsphere_datacenter.datacenter.id
