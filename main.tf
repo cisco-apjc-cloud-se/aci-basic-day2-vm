@@ -117,7 +117,7 @@ resource "vsphere_tag" "app3" {
   description = "Managed by Terraform"
 }
 
-resource "vsphere_tag" "app2" {
+resource "vsphere_tag" "app4" {
   name        = "app4"
   category_id = vsphere_tag_category.category.id
   description = "Managed by Terraform"
