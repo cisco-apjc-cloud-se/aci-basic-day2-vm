@@ -34,6 +34,20 @@ variable "template" {
   type = string
 }
 
+variable "tag_category" {
+  type = object({
+    name        = string
+    description = string
+  })
+}
+
+variable "tags" {
+  type = map(object({
+    name        = string
+    description = string
+  }))
+}
+
 variable "vms" {
   type = map(object({
     name            = string
@@ -45,5 +59,6 @@ variable "vms" {
     ipv4_netmask    = number
     ipv4_gateway    = string
     dns_server_list = list(string)
+    tags            = list(string)
     }))
 }

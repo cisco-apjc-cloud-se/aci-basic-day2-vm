@@ -88,52 +88,23 @@ data "vsphere_virtual_machine" "template" {
 
 ### Tags 
 
-# resource "vsphere_tag_category" "category" {
-#   name        = "aci-esg-tags"
-#   cardinality = "SINGLE"
-#   description = "Managed by Terraform"
+resource "vsphere_tag_category" "category" {
+  name        = var.tag_category.name
+  cardinality = "SINGLE"
+  description = var.tag_category.description
+  associable_types = [
+    "VirtualMachine"
+    # "Datastore",
+  ]
+}
 
-#   associable_types = [
-#     "VirtualMachine"
-#     # "Datastore",
-#   ]
-# }
+resource "vsphere_tag" "esg-tag" {
+  for_each = var.tags
 
-# resource "vsphere_tag" "app1" {
-#   name        = "app1"
-#   category_id = vsphere_tag_category.category.id
-#   description = "Managed by Terraform"
-# }
-
-# resource "vsphere_tag" "app1-web" {
-#   name        = "app1-web"
-#   category_id = vsphere_tag_category.category.id
-#   description = "Managed by Terraform"
-# }
-
-# resource "vsphere_tag" "app1-db" {
-#   name        = "app1-web"
-#   category_id = vsphere_tag_category.category.id
-#   description = "Managed by Terraform"
-# }
-
-# resource "vsphere_tag" "app2" {
-#   name        = "app2"
-#   category_id = vsphere_tag_category.category.id
-#   description = "Managed by Terraform"
-# }
-
-# resource "vsphere_tag" "app3" {
-#   name        = "app3"
-#   category_id = vsphere_tag_category.category.id
-#   description = "Managed by Terraform"
-# }
-
-# resource "vsphere_tag" "app4" {
-#   name        = "app4"
-#   category_id = vsphere_tag_category.category.id
-#   description = "Managed by Terraform"
-# }
+  name        = each.value.name
+  category_id = vsphere_tag_category.category.id
+  description = each.value.description
+}
 
 ### New VM
 resource "vsphere_virtual_machine" "vms" {
@@ -147,6 +118,8 @@ resource "vsphere_virtual_machine" "vms" {
   memory           = each.value.memory
   guest_id         = data.vsphere_virtual_machine.template.guest_id
   scsi_type        = data.vsphere_virtual_machine.template.scsi_type
+
+  tags = [ for tag in each.value.tags : vsphere_tag.esg-tag[tag].id ]
 
   network_interface {
     network_id     = try(data.vsphere_network.dpgs[each.value.dpg_name].id, data.vsphere_network.quarantine.id)
