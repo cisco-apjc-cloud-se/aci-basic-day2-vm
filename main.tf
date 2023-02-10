@@ -38,7 +38,7 @@ data "terraform_remote_state" "day2" {
 ### Locals ###
 locals {
   # ap_epg_map = data.terraform_remote_state.day2.outputs.epg_map["demo-basic-1"]
-  ap_epg_map = data.terraform_remote_state.day2.outputs.test["demo-basic-1"].epg_map
+  ap_epg_map = data.terraform_remote_state.day2.outputs.ap_epg_map["demo-basic-1"]
   dpg_list = flatten([
     for ap_key, ap in local.ap_epg_map : [
       for e_key, epg in ap.epg_map : [
