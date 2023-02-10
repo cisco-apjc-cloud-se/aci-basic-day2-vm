@@ -86,6 +86,43 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = data.vsphere_datacenter.datacenter.id
 }
 
+### Tags 
+
+resource "vsphere_tag_category" "category" {
+  name        = "aci-esg-tags"
+  cardinality = "SINGLE"
+  description = "Managed by Terraform"
+
+  associable_types = [
+    "VirtualMachine"
+    # "Datastore",
+  ]
+}
+
+resource "vsphere_tag" "app1" {
+  name        = "app1"
+  category_id = vsphere_tag_category.category.id
+  description = "Managed by Terraform"
+}
+
+resource "vsphere_tag" "app2" {
+  name        = "app2"
+  category_id = vsphere_tag_category.category.id
+  description = "Managed by Terraform"
+}
+
+resource "vsphere_tag" "app3" {
+  name        = "app3"
+  category_id = vsphere_tag_category.category.id
+  description = "Managed by Terraform"
+}
+
+resource "vsphere_tag" "app2" {
+  name        = "app4"
+  category_id = vsphere_tag_category.category.id
+  description = "Managed by Terraform"
+}
+
 ### New VM
 resource "vsphere_virtual_machine" "vms" {
   for_each = var.vms
